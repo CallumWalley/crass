@@ -1,0 +1,9 @@
+---
+base: "base.html.jinja"
+env: "."
+includes: "includes"
+options: {
+  theme-primary: "#ca6200ef",
+  theme-secondry: "#333333",
+  show-portrait: True
+}

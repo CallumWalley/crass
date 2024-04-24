@@ -1,5 +1,15 @@
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
-[tool.setuptools]
-py-modules = []
+[project]
+name = "crass"
+authors = [{name = "cal"}]
+dynamic = ["version"]
+dependencies = [
+    "css-html-js-minify",
+    "pdfkit",
+    "python-slugify",
+    "libsass",
+    "pydantic-yaml",
+    "jinja2"
+]

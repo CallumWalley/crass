@@ -9,6 +9,7 @@ import datetime
 import pdfkit
 import shutil
 import yaml
+from tempfile import TemporaryDirectory
 from slugify import slugify
 from pathlib import Path
 import sass
@@ -55,7 +56,7 @@ def kw_mask(obj, mask_value):
     else:
         filtered = []
         for filter in mask_value:
-            options = [] # for printing warning message
+            options = []  # for printing warning message
             for item in obj:
                 options.append(item["slug"])
                 if item["slug"] == filter:
@@ -65,6 +66,7 @@ def kw_mask(obj, mask_value):
                 print(f"Could not find anything called '{filter}', options are '{', '.join(options)}'")
     return filtered
 
+
 def kw_overwrite(obj, overwrite_values):
     if isinstance(overwrite_values, dict) and isinstance(obj, dict):
         for key, value in overwrite_values.items():
@@ -73,7 +75,8 @@ def kw_overwrite(obj, overwrite_values):
         return obj
     else:
         return overwrite_values
-      
+
+
 def html2pdf(html, pdf_path):
     """Attempts to render html to pdf"""
     options = {
@@ -87,6 +90,7 @@ def html2pdf(html, pdf_path):
         "keep-relative-links": True
     }
     pdfkit.from_string(html, pdf_path, options=options, verbose=True)
+
 
 def copy_or_render(source, dest):
     """Copy all files from source to dest. If it is scss, render it instead."""
@@ -107,6 +111,7 @@ def copy_or_render(source, dest):
             shutil.copy(file, destination)
             print(f"Created '{destination}'")
 
+
 class CurriculumVitae:
     """
     Class representing a CV, with info fo all it's possible configs.
@@ -121,9 +126,9 @@ class CurriculumVitae:
         self.__ensluginate()
 
     def __ensluginate(self):
-        # Adds nice slug to all items.
+        # Add nice slug to all items.
         # Order in which to use key as slug.
-        key_order = ["slug", "name", "organization", "institution", "title", "language"]
+        key_order = ["slug", "name", "network", "organization", "institution", "title", "language"]
         for category in self.cv.values():
             if isinstance(category, dict):
                 continue
@@ -133,33 +138,35 @@ class CurriculumVitae:
                         item["slug"] = slugify(item[key])
                         break
 
-    def generate_vibe(self, theme, outputs, name="", includes=False, mask=True, overwrite=False):
+    def generate_vibe(self, theme, outputs, theme_options, name="", includes=False, mask=True, overwrite=False):
         """
         Parameters
         ----------
-        theme : str
+        theme: str
             Path to theme directory.
-        outputs : list
+        outputs: list
             List of paths specifying what outputs you want. 
             Currently supports '.html', '.pdf'.
             Must include at least one output.
             Build directory will be parent of first output.
-        name : str, optional
+        theme_options: dict, optional
+            Parameters to overwrite those in theme.yaml:options
+        name: str, optional
             Does nothing.
             (default is "")
-        includes : str, optional
-            Path to include directory. 
+        includes: str, optional
+            Path to include directory.
             Any paths referenced in CV (or overwrites), must be relative to this directory.
             (default is False)
-        mask : dict, optional
+        mask: dict, optional
             Determines what data is used to generate cv.
             (default is True)
             TODO: examples.
-        overwrite : dict, optional
+        overwrite: dict, optional
             A dictionary mirroring the CV file.
             Any values specified here will overwrite CV values for this build only.
             (default is False)
-        """      
+        """
 
         if len(outputs) < 1:
             raise Exception("Must have at least one valid output")
@@ -168,37 +175,35 @@ class CurriculumVitae:
         masked_cv = kw_mask(self.cv, mask)
 
         if overwrite:
-            masked_cv=kw_overwrite(masked_cv, overwrite)
+            masked_cv = kw_overwrite(masked_cv, overwrite)
 
-        #print(cv)
-        theme_variables=load_json_yaml(Path(theme, "theme.yaml"))
+        theme_config = load_json_yaml(Path(theme, "theme.yaml"))
+        theme_options = {**theme_config["options"], **theme_options}
 
         # TODO make this work for other config files e.g. theme.yml
 
         jinja_env = jinja2.environment.Environment(
-            loader=jinja2.FileSystemLoader(Path(theme, theme_variables["env"]))
+            loader=jinja2.FileSystemLoader(Path(theme, theme_config["env"]))
         )
 
         # Get the 'base' template
-        template_main = jinja_env.get_template((theme_variables["base"]))
+        template_main = jinja_env.get_template((theme_config["base"]))
 
-        #build_dir = ".build"
-        build_dir =  Path(outputs[0]).parent
+        # build_dir = ".build"
+        build_dir = Path(outputs[0]).parent
 
         # TODO do this with less assumptions.
         # TODO If no 'web' output specified, should make tmpdir and use that.
 
         # Copy THEME includes (css, etc)
-        if "includes" in theme_variables:
-            copy_or_render(Path(theme, theme_variables["includes"]), build_dir)
+        if "includes" in theme_config:
+            copy_or_render(Path(theme, theme_config["includes"]), build_dir)
 
         # Copy VIBE includes (images, css overwrites etc)
         if includes:
             copy_or_render(includes, build_dir)
 
-
-        html = template_main.render(**masked_cv)
-
+        html = template_main.render({"cv": masked_cv, "options": theme_options})
 
         for output in outputs:
             file_type = Path(output).suffix

@@ -12,7 +12,8 @@ Contains info required to build a specific variant of a CV (vibe).
 Must be a list, where each item has the following keys.
 
 `name`: Name for this vibe.
-`template`: Path to main jinja template to use.
+`theme`: Path to main jinja template to use.
+`theme-options`: Parameters to modify theme. Will overwrite those in `theme.yaml`:`options`
 `output`: List of paths for outputs. Currently supported, `html`, `pdf`.
 `overwrite`: Will clobber values from main CV file. [Not implimented ]
 `filter`: Dictionary containing info on how to filter main CV file.

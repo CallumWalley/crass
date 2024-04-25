@@ -138,7 +138,7 @@ class CurriculumVitae:
                         item["slug"] = slugify(item[key])
                         break
 
-    def generate_vibe(self, outputs=["unamed_cv.html"], theme="./theme_metro", theme_options={},
+    def generate_vibe(self, outputs=["unamed_cv.html"], theme="", theme_options={},
                       name="", includes=False, mask=True, overwrite=False):
         """
         Parameters
@@ -173,6 +173,9 @@ class CurriculumVitae:
 
         if len(outputs) < 1:
             raise Exception("Must have at least one valid output")
+        if not theme:
+            theme = Path(Path(__file__).parent, './theme_metro')
+
 
         # Filter CV data.
         masked_cv = kw_mask(self.cv, mask)

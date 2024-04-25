@@ -138,19 +138,22 @@ class CurriculumVitae:
                         item["slug"] = slugify(item[key])
                         break
 
-    def generate_vibe(self, theme, outputs, theme_options, name="", includes=False, mask=True, overwrite=False):
+    def generate_vibe(self, outputs=["unamed_cv.html"], theme="./theme_metro", theme_options={},
+                      name="", includes=False, mask=True, overwrite=False):
         """
         Parameters
         ----------
+        outputs: list
+                List of paths specifying what outputs you want. 
+                Currently supports '.html', '.pdf'.
+                Must include at least one output.
+                Build directory will be parent of first output.
         theme: str
             Path to theme directory.
-        outputs: list
-            List of paths specifying what outputs you want. 
-            Currently supports '.html', '.pdf'.
-            Must include at least one output.
-            Build directory will be parent of first output.
+            (default is theme_metro)
         theme_options: dict, optional
             Parameters to overwrite those in theme.yaml:options
+            (default is {})
         name: str, optional
             Does nothing.
             (default is "")

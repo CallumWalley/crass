@@ -1,6 +1,6 @@
-{% if cv.socials %}
-<div class="flex social">
-    {% for profiles in cv.basics.profiles %}
+{% if cv.profiles %}
+<div id="profiles" class="flex hline flex--between">
+    {% for profiles in cv.profiles %}
     <div class="flex">
         <i class="{{ profiles.fa_icon_class }}"></i>
         {# <img src="{{ profiles.favicon }}"> #}

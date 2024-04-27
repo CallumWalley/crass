@@ -1,5 +1,5 @@
 {% if cv.basics %}
-<div id="basics" class="flex">
+<div id="basics" class="flex hline">
     {% if options.show_portrait %}
     <div id="portrait" class="">
         <img class="" src="{{ cv.basics.image }}" alt="so handsome and pretty">
@@ -15,17 +15,16 @@
     </div>
     {% endif %}
     <div class="tree">
-        <div class="flex">
-        <h2>{{ cv.basics.name }}</h2><h2>{{ cv.basics.label }}</h2>
+        <div class="flex flex--between">
+        <h1>{{ cv.basics.name }}</h1><h1>{{ cv.basics.label }}</h1>
         </div>
-        <br>
-        <div class="flex">
+        <div class="flex flex--between">
             <div>
                 {% for key, value in cv.basics.location.items() %}
                 <div>{{value}}</div>
                 {% endfor %}
             </div>
-            <div class="align-right">
+            <div>
                 {% for key, value in cv.basics.contact.items() %}
                 <div>{{value}}</div>
                 {% endfor %}

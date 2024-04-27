@@ -40,8 +40,7 @@ body{
 h1{
     font-size: 150%;
     font-weight: 600;
-    margin-top: 8px;
-    margin-bottom: 0;
+    margin: 0 0 0 0;
 }
 
 h2{
@@ -95,6 +94,9 @@ li{
     font-size: 120%;
     width: 100%;
 }
+#basics > .tree {
+    padding: 0em 0em 0 1em;
+}
 .leaf {
     margin: 0;
     border-left: {{ options.theme_primary }} solid 2px;
@@ -119,20 +121,22 @@ li{
 #basics>.tree>.flex {
     padding-left: 140px; 
 }
-#basics>.tree>.flex.social{
-    padding-left: 100px; 
+#profiles{
+    padding-left: 140px; 
 }
 {% endif %}
 .flex{
     display: flex;
-    justify-content: space-between;
     padding: 0 1em 0 0;
+}
+.flex--between{
+    justify-content: space-between;
 }
 .flex__body{
     margin-left: 1.5em;
 }
 .flex--col{
-        flex-direction: column;
+    flex-direction: column;
 }
 .icon{
     display: none;
@@ -150,10 +154,10 @@ li{
 p{
     margin: 0;
 }
-.vline{
-    width: 100%;
+.hline{
     border-bottom: {{ options.theme_primary }} 2px solid;
 }
+
 @media print{
     body{
         width: 680px;

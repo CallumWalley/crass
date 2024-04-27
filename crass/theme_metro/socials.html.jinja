@@ -1,0 +1,11 @@
+{% if cv.socials %}
+<div class="flex social">
+    {% for profiles in cv.basics.profiles %}
+    <div class="flex">
+        <i class="{{ profiles.fa_icon_class }}"></i>
+        {# <img src="{{ profiles.favicon }}"> #}
+        <p href="{{ profiles.url }}">{{ profiles.username }} </p>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}

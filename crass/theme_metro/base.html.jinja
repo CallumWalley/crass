@@ -4,16 +4,16 @@
     <title>Curriculum Vitae</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"  rel="stylesheet">
-    <link href="style/base.css" rel="stylesheet" type="text/css">
+    {% include "style.css.jinja" %}
 </head>
 
 <body>
     <div format="" id="docname"><h5 class=>Curriculum Vit&aelig;</h5>
-    <div class="vline"></div>
-    {% if basics %}
-        {% include "basics.html.jinja" %}   
-    {% endif %}
-    <div class="vline"></div>
+    {# <div class="vline"></div> #}
+    {% include "basics.html.jinja" %}   
+    {% include "socials.html.jinja" %}   
+
+    {# <div class="vline"></div> #}
     <div class="flex">
         <div class="column column--left">
             <div class="leaf"></div>

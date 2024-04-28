@@ -92,8 +92,8 @@ def html2pdf(html, pdf_path):
     pdfkit.from_string(html, pdf_path, options=options, verbose=True)
 
 
-def copy_or_render(source, dest):
-    """Copy all files from source to dest. If it is scss, render it instead."""
+def safe_copy(source, dest):
+    """Copy all files from source to dest."""
     # TODO add warning for overwrites
     for file in Path(source).glob(('**/*')):
         destination = Path(dest, Path(file).relative_to(source))
@@ -101,11 +101,6 @@ def copy_or_render(source, dest):
         if not file.is_file():
             destination.mkdir(exist_ok=True, parents=True)
             print(f"Created '{destination}'")
-
-        elif Path(file).suffix in [".scss", ".sass"]:
-            with open(destination.with_suffix(".css"), "w+") as f:
-                f.write(sass.compile(filename=str(file), output_style="compressed"))
-                print(f"Created '{f}'")
 
         else:
             shutil.copy(file, destination)
@@ -176,7 +171,6 @@ class CurriculumVitae:
         if not theme:
             theme = Path(Path(__file__).parent, './theme_metro')
 
-
         # Filter CV data.
         masked_cv = kw_mask(self.cv, mask)
 
@@ -203,11 +197,11 @@ class CurriculumVitae:
 
         # Copy THEME includes (css, etc)
         if "includes" in theme_config:
-            copy_or_render(Path(theme, theme_config["includes"]), build_dir)
+            safe_copy(Path(theme, theme_config["includes"]), build_dir)
 
         # Copy VIBE includes (images, css overwrites etc)
         if includes:
-            copy_or_render(includes, build_dir)
+            safe_copy(includes, build_dir)
 
         html = template_main.render({"cv": masked_cv, "options": theme_options})
 

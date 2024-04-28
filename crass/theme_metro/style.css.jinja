@@ -10,11 +10,6 @@
 #docname{
     width: 100%;
 }
-#docname > h5{
-    text-align: right;
-    margin: 0;
-    padding: 0 2rem 0 2rem;
-}
 #portrait >svg,img{
     position: absolute;
     width: 15%;
@@ -22,7 +17,7 @@
     margin-left: 1em;
 }
 #portrait > svg{
-    stroke: {{ options.theme_primary }};
+    stroke: {{ options.color_primary }};
     stroke-width: 2px;
     fill: none;
 }
@@ -40,7 +35,7 @@ body{
 h1{
     font-size: 150%;
     font-weight: 600;
-    margin: 0 0 0 0;
+    margin: 0;
 }
 
 h2{
@@ -56,6 +51,12 @@ h3{
     margin: 0;
 }
 
+h5{
+    font-size: 80%;
+    margin: 0;
+    padding: 0 1rem 0 0;
+}
+
 i{
     padding-right: 5px;
 }
@@ -64,7 +65,7 @@ i{
     margin-left: 1em;
 }
 .stub::before{
-    border-bottom: {{ options.theme_primary }} solid 2px;
+    border-bottom: {{ options.color_primary }} solid 2px;
     width: 0.5em;
     height: 0.5em;
     display: inline-block;
@@ -80,8 +81,6 @@ strong{
 }
 .column{
     width: 50%;
-    /* margin-left: 1em;
-    border-left: {{ options.theme_primary }} solid;*/
 }
 ul{
     margin: 0;
@@ -90,16 +89,14 @@ ul{
 li{
     margin: 0;
 }
-.tree{
+.tree {
     font-size: 120%;
     width: 100%;
-}
-#basics > .tree {
-    padding: 0em 0em 0 1em;
+    padding: 0em 1rem 0 1rem;
 }
 .leaf {
     margin: 0;
-    border-left: {{ options.theme_primary }} solid 2px;
+    border-left: {{ options.color_primary }} solid 2px;
 }
 .leaf > :not(.stub){
     margin-left: 2em;
@@ -109,25 +106,28 @@ li{
 }
 .leaf:last-of-type::before{
     height: 0.7em;
-    border-left: {{ options.theme_primary }} solid 2px;
+    border-left: {{ options.color_primary }} solid 2px;
     position: absolute;
     content: " ";
 }
 .column>.leaf:first-of-type{
     padding-top: 1em;
 }
-{% if options.show_portrait%}
+    {% if options.show_portrait and cv.basics.image %}
  /* Padding out area under portrait */
 #basics>.tree>.flex {
-    padding-left: 140px; 
+    padding-left: 120px; 
 }
 #profiles{
-    padding-left: 140px; 
+    padding-left: 120px; 
 }
 {% endif %}
+#profiles{
+    width: auto;
+    font-size:105%; 
+}
 .flex{
     display: flex;
-    padding: 0 1em 0 0;
 }
 .flex--between{
     justify-content: space-between;
@@ -155,7 +155,7 @@ p{
     margin: 0;
 }
 .hline{
-    border-bottom: {{ options.theme_primary }} 2px solid;
+    border-bottom: {{ options.color_primary }} 2px solid;
 }
 
 @media print{

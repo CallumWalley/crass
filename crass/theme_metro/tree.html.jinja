@@ -1,9 +1,9 @@
 {% if items|length > 0 %}
 <div class="leaf">
-<h2 class="stub" id="{{title}}">{{title|title}}</h2>
+<h2 class="flex stub" id="{{title}}">{{title|title}}</h2>
     {% for item in items %}
-    <div class="leaf">
-        <div class="flex flex__header stub">
+    <div class="leaf flex--col">
+        <div class="flex stub">
             <h3>{{item.name}}</h3>
             {% if item.start_date %}
             <div class="yearrange">{{item.start_date}}&#8211;{{item.end_date}}</div>

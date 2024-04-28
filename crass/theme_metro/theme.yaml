@@ -2,7 +2,7 @@
 base: "base.html.jinja"
 env: "."
 options: {
-  theme_primary: "#ca6200ef",
-  theme_secondry: "#333333",
+  color_primary: "#ca6200ef",
+  color_secondry: "#333333",
   show_portrait: True
 }

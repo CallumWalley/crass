@@ -7,13 +7,15 @@
     {% include "style.css.jinja" %}
 </head>
 
+<!-- Tree is anything containing leaves.  -->
+<!-- Can be trees and leaves. -->
+
 <body>
     <div id="docname"><h5 class="align-right hline">Curriculum Vit&aelig;</h5>
     {% include "basics.html.jinja" %}   
     {% include "profiles.html.jinja" %}   
-    <div class="flex">
+    <div class="tree flex">
         <div class="column column--left">
-            <div class="leaf"></div>
             {% set items=(cv.education | sort(attribute='startDate')) %}
             {% set title="Education" %}
             {% include "tree.html.jinja" %}
@@ -25,7 +27,6 @@
             {% include "tree.html.jinja" %}
         </div>
         <div class="column column--right">
-            <div class="leaf"></div>
             {% set items=(cv.skills) %}
             {% set title="Skills" %}
             {% include "tree.html.jinja" %}
@@ -36,7 +37,7 @@
                 <div class="leaf">
                     <h3 class="stub">{{group}}</h3>
                     {%for item in items %}
-                    <div class="flex flex__body">
+                    <div class="flex">
                         <p>{{item.language}}</p>
                     </div>
                     {%endfor%}
@@ -56,12 +57,14 @@
             {%endif%}
         </div>
     </div>
-    <div class="tree" style="display: none;">
-        {% for reference in cv.references %}
-        <div class="onelineitem">
-            {% include "reference_card.html.jinja" %}
-        </div>
-        {% endfor %}
+    <div class="tree">
+        {% if cv.references %}
+            {% for reference in cv.references %}
+            <div class="onelineitem">
+                {% include "reference_card.html.jinja" %}
+            </div>
+            {% endfor %}
+        {% endif %}
     </div>
 </body>
 

@@ -1,15 +1,15 @@
 {% if items|length > 0 %}
 <div class="leaf">
-<h2 class="flex stub" id="{{title}}">{{title|title}}</h2>
+<h2 class="stub" id="{{title}}">{{title|title}}</h2>
     {% for item in items %}
     <div class="leaf flex--col">
-        <div class="flex stub">
-            <h3>{{item.name}}</h3>
+        <h3 class="stub">
+            {{item.name}}
             {% if item.start_date %}
             <div class="yearrange">{{item.start_date}}&#8211;{{item.end_date}}</div>
             {% endif %}
-        </div>
-        <div class="flex flex__body">
+        </h3>
+        <div class="flex">
             <i class=" flex icon material-icons">
                 alternate_email
             </i>

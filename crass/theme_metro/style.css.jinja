@@ -1,6 +1,7 @@
 <style>
 *{
     color: darkslategrey;
+    margin: 0;
 }
 @page{
     background: white;
@@ -9,6 +10,9 @@
 }
 #docname{
     width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column; 
 }
 #portrait >svg,img{
     position: absolute;
@@ -85,13 +89,20 @@ strong{
 }
 ul{
     margin: 0;
-    padding-left: 1.5em;
+    padding: 0 0 0 2em;
+    list-style-type: none;
+}
+li:before {
+    border-bottom: {{ options.color_primary }} solid 2px;
+    width: 0.3em;
+    height: 0.4em;
+    content: " ";
+    margin-left: -1em;
+    margin-bottom: 0.3em;
+    display: inline-block;
 }
 li{
     margin: 0;
-}
-.tree {
-    width: 100%;
 }
 .leaf {
     margin: 0;
@@ -119,11 +130,18 @@ li{
 }
 #profiles{
     padding-left: 120px; 
+    padding-top: 0.2em;
+    padding-bottom: 0.2em;
 }
 {% endif %}
 #profiles{
     width: auto;
     font-size:105%; 
+}
+#footer{
+    padding-top: 1em;
+    padding-bottom: 1em;
+    height: 100%;
 }
 .flex{
     display: flex;
@@ -150,15 +168,18 @@ li{
     font-style: italic;
     color: grey;
     white-space: nowrap;
-    margin-left: 0.5em;
+    margin-left: auto;
+    margin-right: 1em;
     font-size: 90%;
     font-weight: 100;
 }
 p{
     margin: 0;
+    text-wrap: balance;
 }
 .hline{
     border-bottom: {{ options.color_primary }} 2px solid;
+    width: 100%;
 }
 
 @media print{

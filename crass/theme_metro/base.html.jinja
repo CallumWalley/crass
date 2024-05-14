@@ -30,21 +30,7 @@
             {% set items=(cv.skills) %}
             {% set title="Skills" %}
             {% include "tree.html.jinja" %}
-            {% if (cv.languages)|length > 0 %}
-            <div class="leaf">
-                <h2 class="stub" id="languages">Languages</h2>
-                {% for group, items in languages|groupby(attribute="rating", default="It's flexlicated") %}
-                <div class="leaf">
-                    <h3 class="stub">{{group}}</h3>
-                    {%for item in items %}
-                    <div class="flex">
-                        <p>{{item.language}}</p>
-                    </div>
-                    {%endfor%}
-                </div>
-                {% endfor %}
-            </div>
-            {%endif%}
+            {% include "languages.html.jinja" %}
             {% if (cv.qualifications)|length > 0 %}
             <div class="leaf">
                 <h2 class="stub" id="qualifications">Qualifications</h2>
@@ -57,15 +43,17 @@
             {%endif%}
         </div>
     </div>
+    {% if cv.references %}
     <div class="tree">
-        {% if cv.references %}
             {% for reference in cv.references %}
             <div class="onelineitem">
                 {% include "reference_card.html.jinja" %}
             </div>
             {% endfor %}
-        {% endif %}
     </div>
+    {% endif %}
+    {% include "footer.html.jinja" %}
+
 </body>
 
 </html>

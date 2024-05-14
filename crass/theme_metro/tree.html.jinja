@@ -1,37 +1,40 @@
 {% if items|length > 0 %}
 <div class="leaf">
 <h2 class="stub" id="{{title}}">{{title|title}}</h2>
+    <div class="tree">
     {% for item in items %}
-    <div class="leaf flex--col">
-        <h3 class="stub">
-            {{item.name}}
-            {% if item.start_date %}
-            <div class="yearrange">{{item.start_date}}&#8211;{{item.end_date}}</div>
-            {% endif %}
-        </h3>
-        <div class="flex">
-            <i class=" flex icon material-icons">
-                alternate_email
-            </i>
-            <div class="flex flex--col">
-                {% if item.position %}
-                <em>{{item.position}}</em>
-                {%endif%}
-                {% if item.description %}
-                <p>{{item.description}}</p>
-                {%endif%}
-                {% if item.highlights | length > 0 %}
-                <ul>
-                    {% for hl in item.highlights %}
-                    <li>
-                        {{hl}}
-                    </li>
-                    {% endfor %}
-                </ul>
+        <div class="leaf flex--col">
+            <h3 class="stub">
+                {{item.name}}
+
+                {% if item.start_date %}
+                <div class="yearrange">{{item.start_date}}&#8211;{{item.end_date}}</div>
                 {% endif %}
+            </h3>
+            <div class="flex">
+                <i class=" flex icon material-icons">
+                    alternate_email
+                </i>
+                <div class="flex flex--col">            
+                {% if item.position %}
+                    <div class="secondry">{{item.position}}</div>
+                {%endif%}
+                    {% if item.description %}
+                    <p>{{item.description}}</p>
+                    {%endif%}
+                    {% if item.highlights | length > 0 %}
+                    <ul>
+                        {% for hl in item.highlights %}
+                        <li>
+                            {{hl}}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
             </div>
         </div>
-    </div>
     {% endfor %}
+    </div>
 </div>
 {% endif %}

@@ -30,6 +30,8 @@
                         </li>
                         {% endfor %}
                     </ul>
+                    {% elif item.url %}
+                        <a href="{{ item.url }}"> {{ item.url }}</a>
                     {% endif %}
                 </div>
             </div>

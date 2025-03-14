@@ -177,7 +177,9 @@ class CurriculumVitae:
         if overwrite:
             masked_cv = kw_overwrite(masked_cv, overwrite)
 
-        theme_config = load_json_yaml(Path(theme, "theme.yaml"))
+        theme_path = Path(os.getcwd(), theme, 'theme.yaml')
+        print(f"loading theme from {theme_path}")
+        theme_config = load_json_yaml(theme_path)
         theme_options = {**theme_config["options"], **theme_options}
 
         # TODO make this work for other config files e.g. theme.yml

@@ -120,6 +120,9 @@ li{
     position: absolute;
     content: " ";
 }
+.leaf:first-of-type {
+    padding-top: 0.2em;
+}
 .column>.leaf:first-of-type{
     padding-top: 1em;
 }
@@ -164,7 +167,7 @@ li{
 .align-right{
     text-align: end;
 }
-.yearrange{
+.issuer, .yearrange{
     font-style: italic;
     color: grey;
     white-space: nowrap;
@@ -176,6 +179,14 @@ li{
 p{
     margin: 0;
     text-wrap: balance;
+}
+p.link {
+    display: flex;
+    align-content: center;
+    align-items: center;
+}
+p.link > i {
+    font-size: 18px
 }
 .hline{
     border-bottom: {{ options.color_primary }} 2px solid;

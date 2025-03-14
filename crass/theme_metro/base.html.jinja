@@ -36,7 +36,7 @@
                 <h2 class="stub" id="qualifications">Qualifications</h2>
                 {%for qual in cv.qualifications%}
                 <div class="leaf">
-                    <h3 class="stub">{{qual.issuer_short or qual.issuer}} {{qual.name}}</h3>
+                    <h3 class="stub">{{qual.name}}<div class="issuer">{{qual.issuer_short or qual.issuer}}</div></h3>
                 </div>
                 {%endfor%}
             </div>

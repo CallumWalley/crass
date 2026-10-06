@@ -1,0 +1,16 @@
+{% set links = {"email": "mailto:", "phone": "tel:"} %}
+{% if cv.basics %}
+<header>
+    {% if options.show_portrait and cv.basics.image %}
+    <img class="portrait" src="{{ cv.basics.image }}" alt="">
+    {% endif %}
+    <h1>{{ cv.basics.name }}</h1>
+    {% if cv.basics.label %}<div class="label">{{ cv.basics.label }}</div>{% endif %}
+    <div class="contact">
+        {% if cv.basics.location %}<span>{{ cv.basics.location.values() | select | join(", ") }}</span>{% endif %}
+        {% for key, value in (cv.basics.contact or {}).items() if value %}<span><a href="{{ links.get(key, '') }}{{ value }}">{{ value }}</a></span>{% endfor %}
+        {% for profile in cv.profiles or [] %}<span><a href="{{ profile.url }}">{{ profile.username }}</a></span>{% endfor %}
+    </div>
+    {% if cv.basics.summary %}<p class="summary">{{ cv.basics.summary }}</p>{% endif %}
+</header>
+{% endif %}

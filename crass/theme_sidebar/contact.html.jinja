@@ -1,0 +1,20 @@
+{% set icons = {"email": "fa-solid fa-envelope", "phone": "fa-solid fa-phone"} %}
+{% set links = {"email": "mailto:", "phone": "tel:"} %}
+{% if cv.basics or cv.profiles %}
+<section>
+    <h2>Contact</h2>
+    <ul class="contact">
+        {% if cv.basics and cv.basics.location %}
+        <li><i class="fa-solid fa-location-dot"></i><span>{{ cv.basics.location.values() | select | join(", ") }}</span></li>
+        {% endif %}
+        {% if cv.basics and cv.basics.contact %}
+        {% for key, value in cv.basics.contact.items() if value %}
+        <li><i class="{{ icons.get(key, 'fa-solid fa-at') }}"></i><a href="{{ links.get(key, '') }}{{ value }}">{{ value }}</a></li>
+        {% endfor %}
+        {% endif %}
+        {% for profile in cv.profiles or [] %}
+        <li><i class="{{ profile.fa_icon_class or 'fa-solid fa-link' }}"></i><a href="{{ profile.url }}">{{ profile.username }}</a></li>
+        {% endfor %}
+    </ul>
+</section>
+{% endif %}

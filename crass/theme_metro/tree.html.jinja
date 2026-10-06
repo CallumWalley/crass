@@ -1,3 +1,5 @@
+{# Newest first. Items without a start_date go last, in the order given. #}
+{% set items=(items | selectattr('start_date') | sort(attribute='start_date', reverse=True) | list) + (items | rejectattr('start_date') | list) %}
 {% if items|length > 0 %}
 <div class="leaf">
 <h2 class="stub" id="{{title}}">{{title|title}}</h2>

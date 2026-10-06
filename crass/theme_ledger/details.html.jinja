@@ -1,0 +1,40 @@
+{# The short lists, as label: value rows. #}
+{% if cv.languages or cv.qualifications or cv.awards or cv.interests %}
+<section>
+    <h2>Details</h2>
+    {% if cv.languages %}
+    <div class="entry">
+        <div class="when">Languages</div>
+        <div class="what">
+            {% for group, items in cv.languages | groupby(attribute="rating", default="Other") %}
+            <em>{{ group }}</em> {{ items | map(attribute="language") | join(", ") }}{% if not loop.last %}; {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    {% if cv.qualifications %}
+    <div class="entry">
+        <div class="when">Qualifications</div>
+        <div class="what">
+            {% for qual in cv.qualifications %}{{ qual.name }}{% if qual.issuer_short or qual.issuer %} <span class="muted">({{ qual.issuer_short or qual.issuer }})</span>{% endif %}{% if not loop.last %}<span class="sep">·</span>{% endif %}{% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    {% if cv.awards %}
+    <div class="entry">
+        <div class="when">Awards</div>
+        <div class="what">
+            {% for award in cv.awards %}{{ award.name }}{% if award.awarder %} <span class="muted">({{ award.awarder }})</span>{% endif %}{% if not loop.last %}<span class="sep">·</span>{% endif %}{% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    {% if cv.interests %}
+    <div class="entry">
+        <div class="when">Interests</div>
+        <div class="what">
+            {% for interest in cv.interests %}{{ interest.name }}{% if interest.highlights %} <span class="muted">({{ interest.highlights | join("; ") }})</span>{% endif %}{% if not loop.last %}<span class="sep">·</span>{% endif %}{% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</section>
+{% endif %}

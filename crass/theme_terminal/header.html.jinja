@@ -1,0 +1,22 @@
+{% set links = {"email": "mailto:", "phone": "tel:"} %}
+{% if cv.basics %}
+<header>
+    {% if options.show_portrait and cv.basics.image %}
+    <div class="portrait"><img src="{{ cv.basics.image }}" alt=""></div>
+    {% endif %}
+    <div class="cmd">{{ prompt }} whoami</div>
+    <h1>{{ cv.basics.name }}</h1>
+    {% if cv.basics.label %}<div class="comment"># {{ cv.basics.label }}</div>{% endif %}
+    {% if cv.basics.summary %}<p>{{ cv.basics.summary }}</p>{% endif %}
+    <div class="cmd">{{ prompt }} cat contact.yaml</div>
+    <div class="yaml contact">
+        {% if cv.basics.location %}<div><span class="key">location:</span> <span class="str">{{ cv.basics.location.values() | select | join(", ") }}</span></div>{% endif %}
+        {% for key, value in (cv.basics.contact or {}).items() if value %}
+        <div><span class="key">{{ key }}:</span> <a class="str" href="{{ links.get(key, '') }}{{ value }}">{{ value }}</a></div>
+        {% endfor %}
+        {% for profile in cv.profiles or [] %}
+        <div><span class="key">{{ profile.network | lower }}:</span> <a class="str" href="{{ profile.url }}">{{ profile.username }}</a></div>
+        {% endfor %}
+    </div>
+</header>
+{% endif %}

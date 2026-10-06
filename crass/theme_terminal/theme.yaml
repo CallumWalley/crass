@@ -1,0 +1,8 @@
+---
+base: "base.html.jinja"
+env: "."
+options: {
+  color_primary: "#3fb950",
+  dark: True,
+  show_portrait: False
+}

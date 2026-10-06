@@ -7,9 +7,10 @@ authors = [{name = "cal"}]
 dynamic = ["version"]
 dependencies = [
     "jinja2",
-    "pdfkit",
     "python-slugify",
     "pyyaml"
 ]
+[project.optional-dependencies]
+pdf = ["playwright"]
 [project.scripts]
 crass = "crass.cli:main"

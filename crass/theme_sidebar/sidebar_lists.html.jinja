@@ -1,0 +1,54 @@
+{% if cv.education %}
+<section>
+    <h2>Education</h2>
+    {% set items=cv.education %}
+    {% for item in (items | selectattr('start_date') | sort(attribute='start_date', reverse=True) | list) + (items | rejectattr('start_date') | list) %}
+    <div class="education">
+        <h3>{{ item.name_long or item.name }}</h3>
+        {% if item.position %}<div>{{ item.position }}</div>{% endif %}
+        {% if item.start_date %}<div class="issuer">{{ item.start_date }}{% if item.end_date %}&#8211;{{ item.end_date }}{% endif %}</div>{% endif %}
+    </div>
+    {% endfor %}
+</section>
+{% endif %}
+{% if cv.skills %}
+<section>
+    <h2>Skills</h2>
+    {% for skill in cv.skills %}
+    <div class="skill">
+        <h3>{{ skill.name }}</h3>
+        {% if skill.highlights %}
+        <div class="chips">{% for hl in skill.highlights %}<span>{{ hl }}</span>{% endfor %}</div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</section>
+{% endif %}
+{% if cv.languages %}
+<section>
+    <h2>Languages</h2>
+    {% for group, items in cv.languages | groupby(attribute="rating", default="Other") %}
+    <h3>{{ group }}</h3>
+    <div class="chips">{% for item in items %}<span>{{ item.language }}</span>{% endfor %}</div>
+    {% endfor %}
+</section>
+{% endif %}
+{% if cv.qualifications or cv.awards %}
+<section>
+    <h2>Qualifications</h2>
+    <ul class="plain">
+        {% for qual in cv.qualifications or [] %}
+        <li>{{ qual.name }} <span class="issuer">{{ qual.issuer_short or qual.issuer }}</span></li>
+        {% endfor %}
+        {% for award in cv.awards or [] %}
+        <li><i class="fa-solid fa-award"></i> {{ award.name }} <span class="issuer">{{ award.awarder }}</span></li>
+        {% endfor %}
+    </ul>
+</section>
+{% endif %}
+{% if cv.interests %}
+<section>
+    <h2>Interests</h2>
+    <div class="chips">{% for interest in cv.interests %}<span>{{ interest.name }}</span>{% endfor %}</div>
+</section>
+{% endif %}

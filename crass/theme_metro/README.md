@@ -16,10 +16,13 @@ Any other sections (e.g. `awards`, `interests`) are ignored.
 | Section | Fields used |
 | --- | --- |
 | `basics` | `name`, `label`, `image`, `location` (every value), `contact` (every value) |
-| `profiles` | `username`, `url`, `fa_icon_class` ([Font Awesome 4](https://fontawesome.com/v4/icons/) class, e.g. `fa fa-github`) |
+| `profiles` | `username`, `url`, `fa_icon_class` ([Font Awesome 6](https://fontawesome.com/search?o=r&m=free) class, e.g. `fa-brands fa-github`. Font Awesome 4 classes also work, for icons that existed in 4) |
 | `education`, `work`, `volunteer`, `projects`, `skills` | `name`, `name_long` (shown instead of `name`), `start_date`, `end_date`, `position`, `description`, `highlights`, `url` (shown if there are no `highlights`) |
 | `languages` | `language`, `rating` (languages are grouped by rating) |
 | `qualifications` | `name`, `issuer`, `issuer_short` (shown instead of `issuer`) |
 | `references` | `name`, `reference`, `contact` (every value; `phone` and `email` get their own icons) |
 
 `work` and `volunteer` are shown together under 'Employment'.
+
+Items are sorted newest first by `start_date`, items without one go last in the order given.
+Dates are compared as text, so quote them and write them biggest unit first, e.g. `'2018'` or `'2018-07'`.

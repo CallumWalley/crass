@@ -6,12 +6,30 @@ Build several variants ('vibes') of your CV from a single file, so you can stay 
 - A vibes file describes each variant: what to include, what to change, which theme to use.
 - `crass build` renders every vibe, plus an `index.html` for flicking between them. Handy for GitHub Pages.
 
-See [SPECIFICATION.md](SPECIFICATION.md) for the file formats, and [theme_metro](crass/theme_metro/README.md) for the default theme.
+See [SPECIFICATION.md](SPECIFICATION.md) for the file formats.
+
+## Themes
+
+Pick one per vibe with `theme: <name>`, or point `theme` at your own theme directory.
+
+| Theme | Description |
+| --- | --- |
+| [`metro`](crass/theme_metro/README.md) (default) | One page, two columns, with a 'metro line' tree. |
+| [`sidebar`](crass/theme_sidebar/README.md) | Modern, with a coloured sidebar and a timeline. |
+| [`ledger`](crass/theme_ledger/README.md) | Classic single column serif, dates in the margin. |
+| [`terminal`](crass/theme_terminal/README.md) | Your CV as a terminal session, dark or light. |
 
 ## Setup
 
 ```sh
 pip install git+https://github.com/CallumWalley/crass.git
+```
+
+For `.pdf` outputs, also install the `pdf` extra and a headless chromium (about 150 MB):
+
+```sh
+pip install "crass[pdf] @ git+https://github.com/CallumWalley/crass.git"
+playwright install chromium
 ```
 
 Or for development:
@@ -21,7 +39,8 @@ git clone https://github.com/CallumWalley/crass.git
 cd crass
 python -m venv .venv
 source .venv/bin/activate
-pip install -e .
+pip install -e ".[pdf]"
+playwright install chromium
 ```
 
 ## Usage

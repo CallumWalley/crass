@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ cv.basics.name if cv.basics else "Curriculum Vitae" }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    {% include "style.css.jinja" %}
+</head>
+<body>
+    {% include "header.html.jinja" %}
+    {% set title="Experience" %}
+    {% set items=((cv.work or []) + (cv.volunteer or [])) %}
+    {% include "entries.html.jinja" %}
+    {% set title="Education" %}
+    {% set items=(cv.education or []) %}
+    {% include "entries.html.jinja" %}
+    {% set title="Projects" %}
+    {% set items=(cv.projects or []) %}
+    {% include "entries.html.jinja" %}
+    {% if cv.skills %}
+    <section>
+        <h2>Skills</h2>
+        <div class="skills columns">
+            {% for skill in cv.skills %}
+            <p><span class="term">{{ skill.name }}.</span>
+                {{ skill.description or "" }}
+                {% if skill.highlights %}<span class="muted">{{ skill.highlights | join(" · ") }}</span>{% endif %}</p>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+    {% include "details.html.jinja" %}
+    {% if cv.references %}
+    <section>
+        <h2>References</h2>
+        <div class="references">
+            {% for reference in cv.references %}
+            <p><span class="term">{{ reference.name }}</span>, <em>{{ reference.reference }}</em><br>
+                {{ (reference.contact or {}).values() | select | join(" · ") }}</p>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</body>
+</html>

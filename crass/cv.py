@@ -6,10 +6,10 @@ import glob
 import json
 import re
 import datetime
-import pdfkit
 import shutil
+import copy
 import yaml
-from tempfile import TemporaryDirectory
+import tempfile
 from slugify import slugify
 from pathlib import Path
 
@@ -76,19 +76,45 @@ def kw_overwrite(obj, overwrite_values):
         return overwrite_values
 
 
-def html2pdf(html, pdf_path):
-    """Attempts to render html to pdf"""
-    options = {
-        "page-size": "A4",
-        "margin-top": "0",
-        "margin-right": "0",
-        "margin-bottom": "0",
-        "margin-left": "0",
-        "encoding": "UTF-8",
-        "enable-local-file-access": True,
-        "keep-relative-links": True
-    }
-    pdfkit.from_string(html, pdf_path, options=options, verbose=True)
+class PdfRenderer:
+    """
+    Renders html files to pdf using headless chromium (via playwright).
+    Chromium is only started on first use, and is reused until 'close'.
+    """
+    def __init__(self):
+        self._playwright = None
+        self._browser = None
+
+    def render(self, html_path, pdf_path):
+        if self._browser is None:
+            try:
+                from playwright.sync_api import sync_playwright
+            except ImportError:
+                raise ImportError(
+                    "PDF output needs playwright, install it with "
+                    "\"pip install 'crass[pdf]' && playwright install chromium\""
+                ) from None
+            self._playwright = sync_playwright().start()
+            self._browser = self._playwright.chromium.launch()
+
+        page = self._browser.new_page()
+        # 'networkidle' so web fonts (icons) have loaded.
+        page.goto(Path(html_path).resolve().as_uri(), wait_until="networkidle")
+        page.pdf(path=str(pdf_path), prefer_css_page_size=True, print_background=True)
+        page.close()
+
+    def close(self):
+        if self._browser is not None:
+            self._browser.close()
+            self._playwright.stop()
+            self._browser = None
+            self._playwright = None
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        self.close()
 
 
 def safe_copy(source, dest):
@@ -104,6 +130,21 @@ def safe_copy(source, dest):
         else:
             shutil.copy(file, destination)
             print(f"Created '{destination}'")
+
+
+def find_theme(theme):
+    """
+    Returns the path to 'theme'.
+    'theme' can be a path to a theme directory, or the name of a bundled theme (e.g. 'ledger').
+    Defaults to the bundled 'metro' theme.
+    """
+    if theme and Path(theme, "theme.yaml").is_file():
+        return Path(theme)
+    bundled = Path(Path(__file__).parent, f"theme_{theme or 'metro'}")
+    if Path(bundled, "theme.yaml").is_file():
+        return bundled
+    names = sorted(path.name.removeprefix("theme_") for path in Path(__file__).parent.glob("theme_*"))
+    raise Exception(f"Could not find theme '{theme}', expected a directory or one of '{', '.join(names)}'")
 
 
 class CurriculumVitae:
@@ -133,7 +174,7 @@ class CurriculumVitae:
                         break
 
     def generate_vibe(self, outputs=["unamed_cv.html"], theme="", theme_options={},
-                      name="", includes=False, mask=True, overwrite=False):
+                      name="", includes=False, mask=True, overwrite=False, pdf_renderer=None):
         """
         Parameters
         ----------
@@ -143,8 +184,8 @@ class CurriculumVitae:
                 Must include at least one output.
                 Build directory will be parent of first output.
         theme: str
-            Path to theme directory.
-            (default is theme_metro)
+            Path to theme directory, or name of a bundled theme.
+            (default is 'metro')
         theme_options: dict, optional
             Parameters to overwrite those in theme.yaml:options
             (default is {})
@@ -163,18 +204,21 @@ class CurriculumVitae:
             A dictionary mirroring the CV file.
             Any values specified here will overwrite CV values for this build only.
             (default is False)
+        pdf_renderer: PdfRenderer, optional
+            Used for '.pdf' outputs. Pass one in to reuse chromium across vibes.
+            (default is a new PdfRenderer, closed after this vibe)
         """
 
         if len(outputs) < 1:
             raise Exception("Must have at least one valid output")
-        if not theme:
-            theme = Path(Path(__file__).parent, './theme_metro')
+        theme = find_theme(theme)
 
         # Filter CV data.
         masked_cv = kw_mask(self.cv, mask)
 
         if overwrite:
-            masked_cv = kw_overwrite(masked_cv, overwrite)
+            # Copy first, so the overwrite doesn't leak into self.cv (and later vibes).
+            masked_cv = kw_overwrite(copy.deepcopy(masked_cv), overwrite)
 
         theme_path = Path(os.getcwd(), theme, 'theme.yaml')
         print(f"loading theme from {theme_path}")
@@ -214,12 +258,23 @@ class CurriculumVitae:
                     f.write(html)
                 print(f"Created {output}")
             elif file_type == ".pdf":
-                os.environ["TMP"] = str(build_dir)
-                html2pdf(html, output)
+                if pdf_renderer is None:
+                    with PdfRenderer() as renderer:
+                        self.__render_pdf(html, output, build_dir, renderer)
+                else:
+                    self.__render_pdf(html, output, build_dir, pdf_renderer)
                 print(f"Created {output}")
             else:
                 print(f"File type {file_type} no instructions to make.")
         return
+
+    @staticmethod
+    def __render_pdf(html, output, build_dir, renderer):
+        # Rendered from a file in the build directory, so relative paths (e.g. images) resolve.
+        with tempfile.NamedTemporaryFile("w", suffix=".html", dir=build_dir) as f:
+            f.write(html)
+            f.flush()
+            renderer.render(f.name, output)
 
 
 def render_index(pages, index_path):
@@ -251,20 +306,26 @@ def build_site(cv_path, vibes_path, out_dir="docs", index=True):
     out_dir = Path(out_dir)
 
     pages = []
-    for vibe in vibes:
-        vibe = dict(vibe)
-        vibe["outputs"] = [str(Path(out_dir, output)) for output in vibe.get("outputs", [])]
-        for key in ["includes", "theme"]:
-            if vibe.get(key):
-                vibe[key] = str(Path(vibes_dir, vibe[key]))
-        cv.generate_vibe(**vibe)
+    with PdfRenderer() as pdf_renderer:
+        for vibe in vibes:
+            vibe = dict(vibe)
+            vibe["outputs"] = [str(Path(out_dir, output)) for output in vibe.get("outputs", [])]
+            if vibe.get("includes"):
+                vibe["includes"] = str(Path(vibes_dir, vibe["includes"]))
+            # Otherwise, it's the name of a bundled theme.
+            if vibe.get("theme") and Path(vibes_dir, vibe["theme"], "theme.yaml").is_file():
+                vibe["theme"] = str(Path(vibes_dir, vibe["theme"]))
+            cv.generate_vibe(**vibe, pdf_renderer=pdf_renderer)
 
-        html_outputs = [output for output in vibe["outputs"] if Path(output).suffix == ".html"]
-        if html_outputs:
-            pages.append({
-                "name": vibe.get("name") or Path(html_outputs[0]).stem,
-                "url": Path(os.path.relpath(html_outputs[0], out_dir)).as_posix(),
-            })
+            outputs = {}
+            for output in vibe["outputs"]:
+                outputs.setdefault(Path(output).suffix, Path(os.path.relpath(output, out_dir)).as_posix())
+            if ".html" in outputs:
+                pages.append({
+                    "name": vibe.get("name") or Path(outputs[".html"]).stem,
+                    "url": outputs[".html"],
+                    "pdf": outputs.get(".pdf"),
+                })
 
     if index:
         render_index(pages, Path(out_dir, "index.html"))

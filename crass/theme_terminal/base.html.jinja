@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ cv.basics.name if cv.basics else "Curriculum Vitae" }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    {% include "style.css.jinja" %}
+</head>
+{% set user = (cv.basics.name.split(" ")[0] | lower) if cv.basics and cv.basics.name else "user" %}
+{% set prompt %}<span class="prompt"><b>{{ user }}@crass</b>:<span class="path">~/cv</span>$</span>{% endset %}
+<body>
+<div class="window">
+    <div class="titlebar">
+        <span class="dot" style="background: #ff5f57"></span>
+        <span class="dot" style="background: #febc2e"></span>
+        <span class="dot" style="background: #28c840"></span>
+        <span class="title">{{ user }}@crass: ~/cv</span>
+    </div>
+    <div class="screen">
+        {% include "header.html.jinja" %}
+        <div class="columns">
+                {% set title="experience" %}
+                {% set items=((cv.work or []) + (cv.volunteer or [])) %}
+                {% include "tree.html.jinja" %}
+                {% set title="education" %}
+                {% set items=(cv.education or []) %}
+                {% include "tree.html.jinja" %}
+                {% set title="projects" %}
+                {% set items=(cv.projects or []) %}
+                {% include "tree.html.jinja" %}
+                {% set title="skills" %}
+                {% set items=(cv.skills or []) %}
+                {% include "tree.html.jinja" %}
+                {% include "lists.html.jinja" %}
+        </div>
+        {% if cv.references %}
+        <div class="cmd">{{ prompt }} cat references.yaml</div>
+        <div class="references">
+            {% for reference in cv.references %}
+            <div class="yaml">
+                <div><span class="dash">-</span> <span class="key">name:</span> <span class="str">{{ reference.name }}</span></div>
+                <div>&nbsp; <span class="key">role:</span> <span class="str">{{ reference.reference }}</span></div>
+                {% for key, value in (reference.contact or {}).items() if value %}
+                <div>&nbsp; <span class="key">{{ key }}:</span> <span class="str">{{ value }}</span></div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <div class="cmd">{{ prompt }} <span class="cursor"></span></div>
+    </div>
+</div>
+</body>
+</html>

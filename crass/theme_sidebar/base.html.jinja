@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ cv.basics.name if cv.basics else "Curriculum Vitae" }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/v4-shims.min.css" rel="stylesheet">
+    {% include "style.css.jinja" %}
+</head>
+<body>
+<div class="page">
+    <aside class="sidebar">
+        {% if options.show_portrait and cv.basics and cv.basics.image %}
+        <img class="portrait" src="{{ cv.basics.image }}" alt="">
+        {% endif %}
+        {% include "contact.html.jinja" %}
+        {% include "sidebar_lists.html.jinja" %}
+    </aside>
+    <main>
+        {% if cv.basics %}
+        <header>
+            <h1>{{ cv.basics.name }}</h1>
+            {% if cv.basics.label %}<div class="label">{{ cv.basics.label }}</div>{% endif %}
+            {% if cv.basics.summary %}<p class="summary">{{ cv.basics.summary }}</p>{% endif %}
+        </header>
+        {% endif %}
+        {% set title="Experience" %}
+        {% set items=((cv.work or []) + (cv.volunteer or [])) %}
+        {% include "timeline.html.jinja" %}
+        {% set title="Projects" %}
+        {% set items=(cv.projects or []) %}
+        {% include "timeline.html.jinja" %}
+        {% if cv.references %}
+        <section>
+            <h2>References</h2>
+            <div class="references">
+                {% for reference in cv.references %}
+                <div class="reference">
+                    <h3>{{ reference.name }}</h3>
+                    <div class="muted">{{ reference.reference }}</div>
+                    {% for contact_type, contact_value in (reference.contact or {}).items() if contact_value %}
+                    <div>{{ contact_value }}</div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+    </main>
+</div>
+</body>
+</html>

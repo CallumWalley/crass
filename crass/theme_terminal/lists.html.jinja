@@ -1,0 +1,23 @@
+{% if cv.languages %}
+<div class="cmd">{{ prompt }} cat languages.yaml</div>
+<div class="yaml">
+    {% for group, items in cv.languages | groupby(attribute="rating", default="other") %}
+    <div><span class="key">{{ group | lower }}:</span> [{% for item in items %}<span class="str">{{ item.language }}</span>{% if not loop.last %}, {% endif %}{% endfor %}]</div>
+    {% endfor %}
+</div>
+{% endif %}
+{% if cv.qualifications or cv.awards %}
+<div class="cmd">{{ prompt }} ls -1 certs/</div>
+<div class="listing">
+    {% for qual in cv.qualifications or [] %}
+    <div>{{ qual.slug or qual.name }}.pem <span class="comment"># {{ qual.name }}{% if qual.issuer_short or qual.issuer %}, {{ qual.issuer_short or qual.issuer }}{% endif %}</span></div>
+    {% endfor %}
+    {% for award in cv.awards or [] %}
+    <div><span class="str">{{ award.slug or award.name }}.trophy</span> <span class="comment"># {{ award.name }}{% if award.awarder %}, {{ award.awarder }}{% endif %}</span></div>
+    {% endfor %}
+</div>
+{% endif %}
+{% if cv.interests %}
+<div class="cmd">{{ prompt }} echo $INTERESTS</div>
+<div>{{ cv.interests | map(attribute="name") | map("lower") | join(" ") }}</div>
+{% endif %}

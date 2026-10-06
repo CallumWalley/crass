@@ -27,9 +27,9 @@ A yaml or json list. Each item is one vibe, with the following keys.
 
 | Key | Required | Description |
 | --- | --- | --- |
-| `name` | no | Name of this vibe, used in the index page (and its URL, `index.html?name`). Defaults to the output's file name. |
-| `outputs` | yes | List of output files. Supports `.html` and `.pdf` (`.pdf` needs [wkhtmltopdf](https://wkhtmltopdf.org/), and is currently unreliable). |
-| `theme` | no | Path to a theme directory. Defaults to the bundled `theme_metro`. |
+| `name` | no | Name of this vibe, used in the index page (and its URL, `index.html?name`). Defaults to the output's file name. The index links to the first `.html` output, and offers the first `.pdf` output as a download. |
+| `outputs` | yes | List of output files. Supports `.html` and `.pdf` (`.pdf` needs the `pdf` extra, see the README). |
+| `theme` | no | Path to a theme directory, or the name of a bundled theme: `metro` (default), `sidebar`, `ledger`, `terminal`. |
 | `theme_options` | no | Mapping that overrides the theme's `options`. |
 | `includes` | no | Directory whose contents are copied next to the outputs, e.g. images referenced by the CV. |
 | `mask` | no | What to include from the CV, see below. Defaults to everything. |

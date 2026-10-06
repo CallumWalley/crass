@@ -13,7 +13,7 @@
 <body>
     <nav>
         <button onclick="step(-1)">Previous CV</button>
-        <span id="name"></span>
+        <span><span id="name"></span> <a id="pdf" download>Download PDF</a></span>
         <button onclick="step(1)">Next CV</button>
     </nav>
     <iframe id="cv" scrolling="no"></iframe>
@@ -25,6 +25,9 @@
         function show() {
             document.getElementById("cv").src = pages[current].url;
             document.getElementById("name").textContent = pages[current].name;
+            const pdf = document.getElementById("pdf");
+            pdf.hidden = !pages[current].pdf;
+            pdf.href = pages[current].pdf || "";
         }
         function step(n) {
             current = (current + n + pages.length) % pages.length;

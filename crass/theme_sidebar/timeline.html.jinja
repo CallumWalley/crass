@@ -1,0 +1,24 @@
+{# Newest first. Items without a start_date go last, in the order given. #}
+{% set items=(items | selectattr('start_date') | sort(attribute='start_date', reverse=True) | list) + (items | rejectattr('start_date') | list) %}
+{% if items %}
+<section>
+    <h2>{{ title }}</h2>
+    {% for item in items %}
+    <article class="entry">
+        <div class="entry__when">
+            {% if item.start_date %}{{ item.start_date }}{% if item.end_date and item.end_date != item.start_date %}<br>{{ item.end_date }}{% endif %}{% endif %}
+        </div>
+        <div class="entry__body">
+            <h3>{{ item.name_long or item.name }}</h3>
+            {% if item.position %}<div class="entry__position">{{ item.position }}</div>{% endif %}
+            {% if item.description %}<p>{{ item.description }}</p>{% endif %}
+            {% if item.highlights %}
+            <ul>{% for hl in item.highlights %}<li>{{ hl }}</li>{% endfor %}</ul>
+            {% elif item.url %}
+            <a class="entry__url" href="{{ item.url }}"><i class="fa-solid fa-link"></i> {{ item.url | replace("https://", "") | replace("http://", "") | trim("/") }}</a>
+            {% endif %}
+        </div>
+    </article>
+    {% endfor %}
+</section>
+{% endif %}

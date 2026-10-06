@@ -1,0 +1,22 @@
+{# Newest first. Items without a start_date go last, in the order given. #}
+{% set items=(items | selectattr('start_date') | sort(attribute='start_date', reverse=True) | list) + (items | rejectattr('start_date') | list) %}
+{% if items %}
+{# Sections without any dates don't need the date column, so use two columns instead. #}
+{% set undated = not (items | selectattr('start_date') | list) %}
+<section>
+    <h2>{{ title }}</h2>
+    <div class="{{ 'columns' if undated }}">
+    {% for item in items %}
+    <div class="entry">
+        {% if not undated %}<div class="when">{% if item.start_date %}{{ item.start_date }}{% if item.end_date and item.end_date != item.start_date %} – {{ item.end_date }}{% endif %}{% endif %}</div>{% endif %}
+        <div class="what">
+            <div><span class="term">{{ item.name_long or item.name }}</span>{% if item.position %}, <em>{{ item.position }}</em>{% endif %}</div>
+            {% if item.description %}<p>{{ item.description }}</p>{% endif %}
+            {% if item.highlights %}<p class="muted">{{ item.highlights | join(" · ") }}</p>{% endif %}
+            {% if item.url and not item.highlights %}<a class="url" href="{{ item.url }}">{{ item.url | replace("https://", "") | replace("http://", "") | trim("/") }}</a>{% endif %}
+        </div>
+    </div>
+    {% endfor %}
+    </div>
+</section>
+{% endif %}

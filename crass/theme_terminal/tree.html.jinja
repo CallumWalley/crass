@@ -1,0 +1,21 @@
+{# Newest first. Items without a start_date go last, in the order given. #}
+{% set items=(items | selectattr('start_date') | sort(attribute='start_date', reverse=True) | list) + (items | rejectattr('start_date') | list) %}
+{% if items %}
+<div class="cmd">{{ prompt }} tree {{ title }}/</div>
+<div class="dir">{{ title }}/</div>
+<ul class="tree">
+    {% for item in items %}
+    <li>
+        <span class="dir">{{ item.slug or item.name }}/</span>
+        {% if item.start_date %}<span class="date">[{{ item.start_date }}{% if item.end_date and item.end_date != item.start_date %}..{{ item.end_date }}{% endif %}]</span>{% endif %}
+        {% set comment = [item.position, item.name_long or item.name] | select | join(" · ") %}
+        {% if comment %}<div class="comment"># {{ comment }}</div>{% endif %}
+        {% if item.description %}<p>{{ item.description }}</p>{% endif %}
+        {% if item.url %}<a class="url" href="{{ item.url }}">→ {{ item.url | replace("https://", "") | replace("http://", "") | trim("/") }}</a>{% endif %}
+        {% if item.highlights %}
+        <ul>{% for hl in item.highlights %}<li>{{ hl }}</li>{% endfor %}</ul>
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}

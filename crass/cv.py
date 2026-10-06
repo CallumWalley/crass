@@ -221,54 +221,50 @@ class CurriculumVitae:
                 print(f"File type {file_type} no instructions to make.")
         return
 
-# def copy_includes():
-#     shutil.copytree(src, dst)
 
-# def load_data(json_glob):
-#     def _ordinal_day(e):
-#         return -datetime.date(
-#             e.get("year", 1), e.get("month", 1), e.get("day", 1)
-#         ).toordinal()
+def render_index(pages, index_path):
+    """
+    Writes an index page at 'index_path' for flicking between 'pages'.
+    Each page is a dict with a 'name' and a 'url' relative to the index.
+    """
+    jinja_env = jinja2.environment.Environment(
+        loader=jinja2.FileSystemLoader(Path(Path(__file__).parent, "site"))
+    )
+    html = jinja_env.get_template("index.html.jinja").render({"pages": pages})
+    Path(index_path).parent.mkdir(parents=True, exist_ok=True)
+    with open(index_path, "w+") as f:
+        f.write(html)
+    print(f"Created {index_path}")
 
-#     datas = []
-#     for json_file in glob.glob(json_glob):
-#         with open(json_file) as f:
-#             data = json.load(f)
-#             data = {k: sorted(v, key=_ordinal_day) for k, v in data.items()}
-#             entries = list(data.values())[0]
-#             for entry in entries:
 
-#                 if "day" in entry and "month" in entry and "year" in entry:
-#                     entry_time = datetime.datetime(
-#                         entry["year"], entry["month"], entry["day"]
-#                     )
-#                     if entry_time > now:
-#                         entry["year"] = "{} (to appear)".format(entry["year"])
-#                     if entry_time > now - datetime.timedelta(days=365):
-#                         entry["recent"] = True
+def build_site(cv_path, vibes_path, out_dir="docs", index=True):
+    """
+    Builds every vibe in 'vibes_path' from the CV at 'cv_path'.
 
-#                 if "authors" in entry:
-#                     authors = entry["authors"].split(", ")
-#                     if len(authors) > 11:
-#                         n_to_show = 4
-#                         if "Colin Raffel" in authors[n_to_show]:
-#                             n_to_show += 1
-#                         while "*" in authors[n_to_show]:
-#                             n_to_show += 1
-#                         entry["authors"] = ", ".join(
-#                             entry["authors"].split(", ")[:n_to_show]
-#                         )
-#                         n_additional = len(authors) - n_to_show
-#                         entry["authors"] += f", and {n_additional} others"
-#                         if "Colin Raffel" not in entry["authors"]:
-#                             entry["authors"] += " including Colin Raffel"
+    Vibe 'outputs' are relative to 'out_dir'.
+    Vibe 'includes' and 'theme' are relative to the vibes file.
+    If 'index' is true, also writes 'out_dir/index.html'.
+    """
+    cv = CurriculumVitae(cv_path)
+    vibes = load_json_yaml(vibes_path)
+    vibes_dir = Path(vibes_path).resolve().parent
+    out_dir = Path(out_dir)
 
-#                     entry["authors"] = re.sub(
-#                         r"(Colin Raffel)", r"<b>\1</b>", entry["authors"]
-#                     )
+    pages = []
+    for vibe in vibes:
+        vibe = dict(vibe)
+        vibe["outputs"] = [str(Path(out_dir, output)) for output in vibe.get("outputs", [])]
+        for key in ["includes", "theme"]:
+            if vibe.get(key):
+                vibe[key] = str(Path(vibes_dir, vibe[key]))
+        cv.generate_vibe(**vibe)
 
-#                 if "end" in entry and entry["end"] == "now":
-#                     entry["current"] = True
-#             datas.append(data)
+        html_outputs = [output for output in vibe["outputs"] if Path(output).suffix == ".html"]
+        if html_outputs:
+            pages.append({
+                "name": vibe.get("name") or Path(html_outputs[0]).stem,
+                "url": Path(os.path.relpath(html_outputs[0], out_dir)).as_posix(),
+            })
 
-#     return dict((k, v) for d in datas for (k, v) in d.items())
+    if index:
+        render_index(pages, Path(out_dir, "index.html"))

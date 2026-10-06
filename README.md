@@ -1,121 +1,48 @@
+# crass
+
+Build several variants ('vibes') of your CV from a single file, so you can stay up to date with all the fads with minimal effort.
+
+- Your CV lives in one yaml or json file.
+- A vibes file describes each variant: what to include, what to change, which theme to use.
+- `crass build` renders every vibe, plus an `index.html` for flicking between them. Handy for GitHub Pages.
+
+See [SPECIFICATION.md](SPECIFICATION.md) for the file formats, and [theme_metro](crass/theme_metro/README.md) for the default theme.
+
 ## Setup
 
+```sh
+pip install git+https://github.com/CallumWalley/crass.git
+```
+
+Or for development:
 
 ```sh
-git clone https://github.com/
-cd 
+git clone https://github.com/CallumWalley/crass.git
+cd crass
 python -m venv .venv
 source .venv/bin/activate
-pip3 install -e .
+pip install -e .
 ```
 
+## Usage
 
-<a id="__init__"></a>
+```sh
+crass build CurriculumVitae.yaml vibes.yaml --out docs   # build everything into docs/
+crass serve CurriculumVitae.yaml vibes.yaml --port 8000  # build, then serve at localhost:8000
+```
 
-# \_\_init\_\_
+The CV and vibes files default to `CurriculumVitae.yaml` and `vibes.yaml`.
 
-<a id="cv"></a>
-
-# cv
-
-<a id="cv.load_json_yaml"></a>
-
-#### load\_json\_yaml
+Or from python:
 
 ```python
-def load_json_yaml(path)
+from crass import CurriculumVitae, build_site
+
+build_site("CurriculumVitae.yaml", "vibes.yaml", "docs")
+
+# Or a single vibe.
+cv = CurriculumVitae("CurriculumVitae.yaml")
+cv.generate_vibe(outputs=["docs/engineering.html"], mask={"basics": True, "work": True})
 ```
 
-Loads a json, or yaml file from 'path'
-
-<a id="cv.kw_mask"></a>
-
-#### kw\_mask
-
-```python
-def kw_mask(obj, mask_value)
-```
-
-Filters one dictionary based on another.
-Tried to use as common sense rules as possible.
-
-<a id="cv.html2pdf"></a>
-
-#### html2pdf
-
-```python
-def html2pdf(html, pdf_path)
-```
-
-Attempts to render html to pdf
-
-<a id="cv.copy_or_render"></a>
-
-#### copy\_or\_render
-
-```python
-def copy_or_render(source, dest)
-```
-
-Copy all files from source to dest. If it is scss, render it instead.
-
-<a id="cv.CurriculumVitae"></a>
-
-## CurriculumVitae Objects
-
-```python
-class CurriculumVitae()
-```
-
-Class representing a CV, with info fo all it's possible configs.
-
-<a id="cv.CurriculumVitae.__init__"></a>
-
-#### \_\_init\_\_
-
-```python
-def __init__(path)
-```
-
-Parameters
-----------
-path : path to cv file. Can be yaml or json.
-
-<a id="cv.CurriculumVitae.generate_vibe"></a>
-
-#### generate\_vibe
-
-```python
-def generate_vibe(theme,
-                  outputs,
-                  name="",
-                  includes=False,
-                  mask=True,
-                  overwrite=False)
-```
-
-Parameters
-----------
-theme : str
-    Path to theme directory.
-outputs : list
-    List of paths specifying what outputs you want. 
-    Currently supports '.html', '.pdf'.
-    Must include at least one output.
-    Build directory will be parent of first output.
-name : str, optional
-    Does nothing.
-    (default is "")
-includes : str, optional
-    Path to include directory. 
-    Any paths referenced in CV (or overwrites), must be relative to this directory.
-    (default is False)
-mask : dict, optional
-    Determines what data is used to generate cv.
-    (default is True)
-    TODO: examples.
-overwrite : dict, optional
-    A dictionary mirroring the CV file.
-    Any values specified here will overwrite CV values for this build only.
-    (default is False)
-
+For a real example, see [CallumWalley/cv](https://github.com/CallumWalley/cv).

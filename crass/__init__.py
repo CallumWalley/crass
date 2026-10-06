@@ -1,1 +1,1 @@
-from .cv import CurriculumVitae
+from .cv import CurriculumVitae, build_site

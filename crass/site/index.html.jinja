@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Curriculum Vitae</title>
+    <style>
+        body { background: #f3f3f3; margin: 0; }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 0.5em; }
+        iframe { display: block; margin: auto; width: 21cm; height: 29cm; border: none; background: white; box-shadow: 1em 1em 20px 0px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <button onclick="step(-1)">Previous CV</button>
+        <span id="name"></span>
+        <button onclick="step(1)">Next CV</button>
+    </nav>
+    <iframe id="cv" scrolling="no"></iframe>
+    <script>
+        const pages = {{ pages | tojson }};
+        // '?name' in the URL selects a vibe, so links can point at a specific one.
+        let current = Math.max(0, pages.findIndex(page => page.name == location.search.slice(1)));
+
+        function show() {
+            document.getElementById("cv").src = pages[current].url;
+            document.getElementById("name").textContent = pages[current].name;
+        }
+        function step(n) {
+            current = (current + n + pages.length) % pages.length;
+            history.pushState(null, "", location.pathname + "?" + pages[current].name);
+            show();
+        }
+        if (pages.length) { show(); }
+    </script>
+</body>
+</html>

@@ -11,3 +11,5 @@ dependencies = [
     "python-slugify",
     "pyyaml"
 ]
+[project.scripts]
+crass = "crass.cli:main"

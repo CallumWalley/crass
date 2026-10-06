@@ -6,10 +6,8 @@ name = "crass"
 authors = [{name = "cal"}]
 dynamic = ["version"]
 dependencies = [
-    "css-html-js-minify",
+    "jinja2",
     "pdfkit",
     "python-slugify",
-    "libsass",
-    "pydantic-yaml",
-    "jinja2"
+    "pyyaml"
 ]

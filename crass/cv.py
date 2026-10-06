@@ -12,7 +12,6 @@ import yaml
 from tempfile import TemporaryDirectory
 from slugify import slugify
 from pathlib import Path
-import sass
 
 """
 This package allows for continous deployment of multiple variants of your CV, so you can stay up to date with all the fads with minimal effort.

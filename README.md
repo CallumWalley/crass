@@ -6,7 +6,7 @@ git clone https://github.com/
 cd 
 python -m venv .venv
 source .venv/bin/activate
-pip3 install -r pyproject.yml
+pip3 install -e .
 ```
 
 
